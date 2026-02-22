@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redspector Hero</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:#070b10;
+  color:#fff;
+  scroll-behavior:smooth;
+}
+
+/* ===== HERO ===== */
+.hero{
+  max-width:1200px;
+  margin:auto;
+  padding:80px 20px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+
+.tag{
+  display:inline-block;
+  border:1px solid #39ff14;
+  color:#39ff14;
+  padding:8px 18px;
+  border-radius:6px;
+  font-size:14px;
+  margin-bottom:25px;
+}
+
+.hero h1{
+  font-size:48px;
+  line-height:1.2;
+  margin-bottom:30px;
+}
+
+.info{
+  display:flex;
+  gap:20px;
+  margin-bottom:35px;
+  flex-wrap:wrap;
+}
+
+.info-box{
+  background:#0f1621;
+  padding:14px 18px;
+  border-radius:10px;
+  font-size:14px;
+  color:#cfcfcf;
+  border:1px solid #1f2937;
+}
+
+.buttons{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.btn-primary{
+  background:#2f6fd6;
+  padding:16px 32px;
+  border-radius:8px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.btn-outline{
+  border:1px solid #39ff14;
+  padding:16px 32px;
+  border-radius:8px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.btn-outline:hover{
+  background:#39ff14;
+  color:#000;
+}
+
+/* ===== WHY SECTION ===== */
+.why{
+  max-width:1200px;
+  margin:auto;
+  padding:80px 20px;
+}
+
+.highlight{ color:#39ff14; }
+
+.content p{
+  color:#a0a7b4;
+  line-height:1.7;
+}
+
+/* ===== CURRICULUM ===== */
+.curriculum{
+  max-width:900px;
+  margin:80px auto;
+  padding:0 20px;
+}
+
+.curriculum h2{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.curriculum span{ color:#39ff14; }
+
+.accordion-item{
+  background:#0f1621;
+  border:1px solid #1f2937;
+  border-radius:10px;
+  margin-bottom:15px;
+  overflow:hidden;
+}
+
+.accordion-header{
+  padding:18px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+}
+
+.accordion-content{
+  max-height:0;
+  overflow:hidden;
+  transition:0.3s ease;
+  padding:0 18px;
+}
+
+.accordion-content ul{
+  padding:15px 0;
+  margin:0;
+}
+
+.accordion-content li{
+  margin-bottom:8px;
+  color:#cfcfcf;
+}
+
+.accordion-item.active .accordion-content{
+  max-height:220px;
+}
+
+/* ===== APPLY FORM ===== */
+.apply{
+  max-width:600px;
+  margin:80px auto;
+  padding:40px 20px;
+}
+
+.apply h2{
+  margin-bottom:25px;
+}
+
+.apply-form{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.apply-form input,
+.apply-form select{
+  padding:16px;
+  border-radius:8px;
+  border:1px solid #1f2937;
+  background:#111827;
+  color:#fff;
+}
+
+.submit-btn{
+  padding:18px;
+  background:#39ff14;
+  color:#000;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .hero{ grid-template-columns:1fr; text-align:center; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+
+  <div>
+    <div class="tag">Absolute Beginner</div>
+
+    <h1>
+      Start Your Cybersecurity Journey with Our Starter Hacker Course
+    </h1>
+
+    <div class="info">
+      <div class="info-box">📘 5 Modules</div>
+      <div class="info-box">📅 2 Months</div>
+      <div class="info-box">🌐 Online</div>
+    </div>
+
+    <div class="buttons">
+      <!-- ✅ NOW SCROLLS TO FORM -->
+      <a href="#apply" class="btn-primary">Enroll Now</a>
+
+      <!-- ✅ SCROLLS TO CURRICULUM -->
+      <a href="#curriculum" class="btn-outline">Know More ↓</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== WHY ===== -->
+<section class="why">
+  <div class="content">
+    <h2>
+      Why you should choose our course
+      <span class="highlight">Starter Hacker</span>
+    </h2>
+
+    <p>
+      The Starter Hacker course is specially designed for absolute beginners
+      who want to enter the world of cybersecurity and ethical hacking.
+      This program builds strong foundations in Linux, networking, and web
+      security through guided labs and real-world practice.
+    </p>
+  </div>
+</section>
+
+<!-- ===== CURRICULUM ===== -->
+<section id="curriculum" class="curriculum">
+
+  <h2>Explore our Course <span>Curriculum</span></h2>
+
+  <div class="accordion-item">
+    <div class="accordion-header">
+      Module 1 : Web & Internet Fundamentals
+      <span>⌄</span>
+    </div>
+    <div class="accordion-content">
+      <ul>
+        <li>How the Internet works</li>
+        <li>Client–Server model</li>
+        <li>HTTP vs HTTPS</li>
+         <li>HTTP methods & status codes</li>
+         <li>Cookies & sessions basics</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+<div class="accordion-item"> 
+  <div class="accordion-header"> 
+    Module 2 : HTML & CSS Basics for Hackers<span>⌄
+
+    </span> 
+  </div>
+   <div class="accordion-content"> 
+    <ul> <li>HTML structure & DOM</li>
+       <li>Forms and input fields</li>
+        <li>Hidden fields</i> 
+          <li>CSS selectors (class, id)</i>
+             <li>Client-side validation basics</i>
+             </ul> </div> </div> <div class="accordion-item">
+               <div class="accordion-header"> Module 3 : JavaScript Basics <span>
+                ⌄</span> </div> <div class="accordion-content"> <ul> 
+                  <li>JavaScript fundamentals</li> <li>DOM basics</li> 
+                  <li>Event handling</li> <li>Client-side security controls</li>
+                   <li>Intro to DOM XSS concept</li> 
+                  </ul> </div> 
+                </div> 
+                <div class="accordion-item">
+                   <div class="accordion-header"> 
+                    Module 4 :SQL Fundamentals <span>
+                      ⌄</span> </div> <div class="accordion-content"> 
+                        <ul> <li>Database basics</li> <li>SELECT, INSERT, UPDATE</li> 
+                          <li>Login query logic</li> <li>Intro to SQL Injection</li> </ul>
+                         </div> </div> <div class="accordion-item"> <div class="accordion-header"> 
+                          Module 5 : OWASP Top 10 Overview <span>⌄</span> </div> <div class="accordion-content"> <ul>
+   <li>What is OWASP</li> <li>Top 10 vulnerabilities overview</li> <li>Real-world examples</li> <li>Basic TryHackMe guidance</li> </ul> </div> </div>
+
+</section>
+
+<!-- ===== APPLY FORM ===== -->
+<section id="apply" class="apply">
+
+  <h2>Apply Now</h2>
+
+  <form class="apply-form">
+    <input type="text" placeholder="Full Name" required>
+    <input type="email" placeholder="Email Address" required>
+    <input type="tel" placeholder="Contact Number" required>
+    <input type="text" placeholder="Your Location" required>
+
+    <select required>
+      <option>Starter Hacker</option>     
+    </select>
+
+    <button class="submit-btn">Submit</button>
+  </form>
+
+</section>
+
+<script>
+document.querySelectorAll(".accordion-header").forEach(header=>{
+  header.addEventListener("click",()=>{
+    header.parentElement.classList.toggle("active");
+  });
+});
+</script>
+
+</body>
+</html>

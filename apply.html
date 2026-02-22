@@ -1,0 +1,225 @@
+<!-- ===== APPLY SECTION — ULTRA PREMIUM ===== -->
+<section id="apply" class="apply">
+  <div class="apply-wrap">
+    <h2 class="apply-title">Apply Now</h2>
+    <p class="apply-sub">Join the next generation of ethical hackers</p>
+
+    <form class="apply-form">
+      
+      <div class="field">
+        <input type="text" required>
+        <label>Full Name</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="email" required>
+        <label>Email Address</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="tel" required>
+        <label>Contact Number</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="text" required>
+        <label>Your Location</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field select-field">
+        <select required>
+          <option value="" disabled selected></option>
+          <option>Starter Hacker</option>
+          <option>Bug Bounty Hunter</option>
+          <option>Red Team Path</option>
+          <option>Advanced Pentester</option>
+        </select>
+        <label>Choose Program</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <button class="submit-btn">
+        <span>🚀 Submit Application</span>
+        <div class="btn-glow"></div>
+      </button>
+
+    </form>
+  </div>
+</section>
+
+<style>
+/* ===== APPLY SECTION ===== */
+.apply{
+  padding:120px 20px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0, 255, 170, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(0,200,255,0.08), transparent 40%),
+    #05080d;
+  position:relative;
+  overflow:hidden;
+}
+
+/* grid overlay */
+.apply::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,170,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,170,0.05) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+
+/* container */
+.apply-wrap{
+  max-width:600px;
+  margin:auto;
+  position:relative;
+  z-index:2;
+}
+
+/* title */
+.apply-title{
+  text-align: center;
+  font-size: 42px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #00ffae, #00cfff);
+  -webkit-background-clip: text;
+  background-clip: text; /* 🔥 important for compatibility */
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+.apply-sub{
+  text-align:center;
+  color:#8fa3b0;
+  margin-bottom:50px;
+}
+
+/* form */
+.apply-form{
+  display:flex;
+  flex-direction:column;
+  gap:28px;
+}
+
+/* field */
+.field{
+  position:relative;
+}
+
+/* inputs */
+.field input,
+.field select{
+  width:100%;
+  padding:18px 14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(0,255,170,0.15);
+  border-radius:12px;
+  color:#00ffae;
+  font-size:15px;
+  outline:none;
+  backdrop-filter:blur(10px);
+  transition:all .3s ease;
+}
+
+/* select arrow fix */
+.select-field select{
+  appearance:none;
+}
+
+/* floating label */
+.field label{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#7f95a3;
+  font-size:14px;
+  pointer-events:none;
+  transition:all .25s ease;
+  background:#05080d;
+  padding:0 6px;
+}
+
+/* float animation */
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field select:focus + label,
+.field select:valid + label{
+  top:-8px;
+  font-size:12px;
+  color:#00ffae;
+}
+
+/* neon border */
+.focus-border{
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  pointer-events:none;
+  box-shadow:0 0 0 rgba(0,255,170,0);
+  transition:.3s;
+}
+
+.field input:focus ~ .focus-border,
+.field select:focus ~ .focus-border{
+  box-shadow:
+    0 0 12px rgba(0,255,170,0.5),
+    0 0 30px rgba(0,200,255,0.25);
+}
+
+/* submit button */
+.submit-btn{
+  position:relative;
+  padding:18px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  color:#001a12;
+  background:linear-gradient(90deg,#00ffae,#00cfff);
+  cursor:pointer;
+  overflow:hidden;
+  transition:.25s;
+}
+
+.submit-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 30px rgba(0,255,170,0.35);
+}
+
+/* button glow sweep */
+.btn-glow{
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  transform:skewX(-20deg);
+  transition:.6s;
+}
+
+.submit-btn:hover .btn-glow{
+  left:130%;
+}
+
+/* responsive */
+@media(max-width:600px){
+  .apply-title{
+    font-size:32px;
+  }
+}
+</style>
