@@ -1,66 +1,34 @@
-<!-- ===== APPLY SECTION — ULTRA PREMIUM ===== -->
-<section id="apply" class="apply">
-  <div class="apply-wrap">
-    <h2 class="apply-title">Apply Now</h2>
-    <p class="apply-sub">Join the next generation of ethical hackers</p>
-
-    <form class="apply-form">
-
-      <div class="field">
-        <input type="text" placeholder=" " required>
-        <label>Full Name</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <div class="field">
-        <input type="email" placeholder=" " required>
-        <label>Email Address</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <div class="field">
-        <input type="tel" placeholder=" " required>
-        <label>Contact Number</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <div class="field">
-        <input type="text" placeholder=" " required>
-        <label>Your Location</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <div class="field select-field">
-        <select required>
-          <option value="" disabled selected hidden></option>
-          <option>Starter Hacker</option>
-          <option>Bug Bounty Hunter</option>
-          <option>Red Team Path</option>
-          <option>Advanced Pentester</option>
-        </select>
-        <label>Choose Program</label>
-        <span class="focus-border"></span>
-      </div>
-
-      <button class="submit-btn">
-        <span>🚀 Submit Application</span>
-        <div class="btn-glow"></div>
-      </button>
-
-    </form>
-  </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Now</title>
 
 <style>
+
+/* ===== GLOBAL FIX ===== */
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#05080d;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
 /* ===== APPLY SECTION ===== */
 .apply{
-  padding:120px 20px;
+  padding:100px 20px;
   background:
     radial-gradient(circle at 20% 20%, rgba(0,255,170,0.08), transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(0,200,255,0.08), transparent 40%),
     #05080d;
   position:relative;
   overflow:hidden;
+  min-height:100vh;
 }
 
 /* grid overlay */
@@ -83,7 +51,7 @@
   z-index:2;
 }
 
-/* ===== TITLE ===== */
+/* title */
 .apply-title{
   text-align:center;
   font-size:42px;
@@ -101,11 +69,11 @@
   margin-bottom:50px;
 }
 
-/* ===== FORM ===== */
+/* form */
 .apply-form{
   display:flex;
   flex-direction:column;
-  gap:28px;
+  gap:24px;
 }
 
 /* field */
@@ -125,10 +93,10 @@
   font-size:15px;
   outline:none;
   backdrop-filter:blur(10px);
-  transition:all .3s ease;
+  transition:.25s;
 }
 
-/* remove default arrow */
+/* select arrow fix */
 .select-field select{
   appearance:none;
 }
@@ -142,7 +110,7 @@
   color:#7f95a3;
   font-size:14px;
   pointer-events:none;
-  transition:all .25s ease;
+  transition:.25s;
   background:#05080d;
   padding:0 6px;
 }
@@ -164,7 +132,7 @@
   border-radius:12px;
   pointer-events:none;
   box-shadow:0 0 0 rgba(0,255,170,0);
-  transition:.3s;
+  transition:.25s;
 }
 
 .field input:focus ~ .focus-border,
@@ -174,7 +142,7 @@
     0 0 30px rgba(0,200,255,0.25);
 }
 
-/* ===== BUTTON ===== */
+/* submit button */
 .submit-btn{
   position:relative;
   padding:18px;
@@ -187,7 +155,6 @@
   cursor:pointer;
   overflow:hidden;
   transition:.25s;
-  width:100%;
 }
 
 .submit-btn:hover{
@@ -195,7 +162,7 @@
   box-shadow:0 10px 30px rgba(0,255,170,0.35);
 }
 
-/* glow sweep */
+/* button glow */
 .btn-glow{
   position:absolute;
   top:0;
@@ -216,32 +183,21 @@
   left:130%;
 }
 
-/* ===== TABLET ===== */
-@media (max-width:768px){
+/* ===== MOBILE ===== */
+@media(max-width:600px){
 
   .apply{
-    padding:80px 16px;
+    padding:70px 16px;
   }
 
   .apply-title{
     font-size:32px;
-    line-height:1.2;
-  }
-
-  .apply-sub{
-    font-size:14px;
-    margin-bottom:32px;
-  }
-
-  .apply-form{
-    gap:20px;
   }
 
   .field input,
   .field select{
-    padding:15px 12px;
+    padding:16px 12px;
     font-size:14px;
-    border-radius:10px;
   }
 
   .submit-btn{
@@ -250,26 +206,64 @@
   }
 }
 
-/* ===== SMALL PHONES ===== */
-@media (max-width:420px){
-
-  .apply{
-    padding:70px 14px;
-  }
-
-  .apply-title{
-    font-size:28px;
-  }
-
-  .field input,
-  .field select{
-    padding:14px 12px;
-    font-size:13.5px;
-  }
-
-  .submit-btn{
-    padding:14px;
-    font-size:14px;
-  }
-}
 </style>
+</head>
+
+<body>
+
+<!-- ===== APPLY SECTION — ULTRA PREMIUM ===== -->
+<section id="apply" class="apply">
+  <div class="apply-wrap">
+
+    <h2 class="apply-title">Apply Now</h2>
+    <p class="apply-sub">Join the next generation of ethical hackers</p>
+
+    <form class="apply-form">
+
+      <div class="field">
+        <input type="text" required placeholder=" ">
+        <label>Full Name</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="email" required placeholder=" ">
+        <label>Email Address</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="tel" required placeholder=" ">
+        <label>Contact Number</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field">
+        <input type="text" required placeholder=" ">
+        <label>Your Location</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <div class="field select-field">
+        <select required>
+          <option value="" disabled selected></option>
+          <option>Starter Hacker</option>
+          <option>Bug Bounty Hunter</option>
+          <option>Red Team Path</option>
+          <option>Advanced Pentester</option>
+        </select>
+        <label>Choose Program</label>
+        <span class="focus-border"></span>
+      </div>
+
+      <button class="submit-btn">
+        <span>🚀 Submit Application</span>
+        <div class="btn-glow"></div>
+      </button>
+
+    </form>
+  </div>
+</section>
+
+</body>
+</html>
