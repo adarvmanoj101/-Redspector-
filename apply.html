@@ -5,34 +5,34 @@
     <p class="apply-sub">Join the next generation of ethical hackers</p>
 
     <form class="apply-form">
-      
+
       <div class="field">
-        <input type="text" required>
+        <input type="text" placeholder=" " required>
         <label>Full Name</label>
         <span class="focus-border"></span>
       </div>
 
       <div class="field">
-        <input type="email" required>
+        <input type="email" placeholder=" " required>
         <label>Email Address</label>
         <span class="focus-border"></span>
       </div>
 
       <div class="field">
-        <input type="tel" required>
+        <input type="tel" placeholder=" " required>
         <label>Contact Number</label>
         <span class="focus-border"></span>
       </div>
 
       <div class="field">
-        <input type="text" required>
+        <input type="text" placeholder=" " required>
         <label>Your Location</label>
         <span class="focus-border"></span>
       </div>
 
       <div class="field select-field">
         <select required>
-          <option value="" disabled selected></option>
+          <option value="" disabled selected hidden></option>
           <option>Starter Hacker</option>
           <option>Bug Bounty Hunter</option>
           <option>Red Team Path</option>
@@ -56,7 +56,7 @@
 .apply{
   padding:120px 20px;
   background:
-    radial-gradient(circle at 20% 20%, rgba(0, 255, 170, 0.08), transparent 40%),
+    radial-gradient(circle at 20% 20%, rgba(0,255,170,0.08), transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(0,200,255,0.08), transparent 40%),
     #05080d;
   position:relative;
@@ -83,16 +83,16 @@
   z-index:2;
 }
 
-/* title */
+/* ===== TITLE ===== */
 .apply-title{
-  text-align: center;
-  font-size: 42px;
-  margin-bottom: 10px;
-  background: linear-gradient(90deg, #00ffae, #00cfff);
-  -webkit-background-clip: text;
-  background-clip: text; /* 🔥 important for compatibility */
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.5px;
+  text-align:center;
+  font-size:42px;
+  margin-bottom:10px;
+  background:linear-gradient(90deg,#00ffae,#00cfff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:.5px;
 }
 
 .apply-sub{
@@ -101,7 +101,7 @@
   margin-bottom:50px;
 }
 
-/* form */
+/* ===== FORM ===== */
 .apply-form{
   display:flex;
   flex-direction:column;
@@ -128,7 +128,7 @@
   transition:all .3s ease;
 }
 
-/* select arrow fix */
+/* remove default arrow */
 .select-field select{
   appearance:none;
 }
@@ -174,7 +174,7 @@
     0 0 30px rgba(0,200,255,0.25);
 }
 
-/* submit button */
+/* ===== BUTTON ===== */
 .submit-btn{
   position:relative;
   padding:18px;
@@ -187,15 +187,15 @@
   cursor:pointer;
   overflow:hidden;
   transition:.25s;
+  width:100%;
 }
 
 .submit-btn:hover{
   transform:translateY(-2px);
-  box-shadow:
-    0 10px 30px rgba(0,255,170,0.35);
+  box-shadow:0 10px 30px rgba(0,255,170,0.35);
 }
 
-/* button glow sweep */
+/* glow sweep */
 .btn-glow{
   position:absolute;
   top:0;
@@ -216,10 +216,60 @@
   left:130%;
 }
 
-/* responsive */
-@media(max-width:600px){
+/* ===== TABLET ===== */
+@media (max-width:768px){
+
+  .apply{
+    padding:80px 16px;
+  }
+
   .apply-title{
     font-size:32px;
+    line-height:1.2;
+  }
+
+  .apply-sub{
+    font-size:14px;
+    margin-bottom:32px;
+  }
+
+  .apply-form{
+    gap:20px;
+  }
+
+  .field input,
+  .field select{
+    padding:15px 12px;
+    font-size:14px;
+    border-radius:10px;
+  }
+
+  .submit-btn{
+    padding:16px;
+    font-size:15px;
+  }
+}
+
+/* ===== SMALL PHONES ===== */
+@media (max-width:420px){
+
+  .apply{
+    padding:70px 14px;
+  }
+
+  .apply-title{
+    font-size:28px;
+  }
+
+  .field input,
+  .field select{
+    padding:14px 12px;
+    font-size:13.5px;
+  }
+
+  .submit-btn{
+    padding:14px;
+    font-size:14px;
   }
 }
 </style>
