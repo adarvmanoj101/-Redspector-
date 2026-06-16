@@ -1,321 +1,1504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Redspector Courses</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopSmart – Web Security Training Lab</title>
 <style>
-*{box-sizing:border-box}
+  :root {
+    --bg: #0f0f13;
+    --surface: #16161d;
+    --surface2: #1e1e28;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --green: #00e5a0;
+    --yellow: #ffd166;
+    --red: #ff4d6d;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --shop-bg: #fff;
+    --shop-nav: #1a1a2e;
+    --shop-accent: #e94560;
+    --shop-card: #f8f8fc;
+    --shop-border: #e0e0ec;
+    --shop-text: #1a1a2e;
+    --shop-muted: #666;
+  }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #ffffff;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(57,255,20,0.08), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(0,255,200,0.06), transparent 40%),
-    #0b0f14;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* HEADER */
-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(12px);
-  background: rgba(15, 23, 42, 0.75);
-  border-bottom: 1px solid #1f2937;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 40px;
-}
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  color: #d91f26;
-}
+  /* ── CONTROL PANEL ── */
+  #control-panel {
+    position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+    background: var(--surface); border-right: 1px solid var(--border);
+    overflow-y: auto; z-index: 1000; display: flex; flex-direction: column;
+  }
 
-.logo img { height: 36px; }
+  #cp-header {
+    padding: 20px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    position: sticky; top: 0; z-index: 2;
+  }
 
-nav a {
-  color: #cfcfcf;
-  text-decoration: none;
-  margin-left: 25px;
-  font-size: 14px;
-  position: relative;
-}
+  #cp-header .badge {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+    letter-spacing: 1px; margin-bottom: 6px;
+  }
 
-nav a::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-4px;
-  width:0%;
-  height:2px;
-  background:#d91f26;
-  transition:.25s;
-}
+  #cp-header h2 { font-size: 15px; color: var(--text); font-weight: 700; }
+  #cp-header p { font-size: 11px; color: var(--muted); margin-top: 3px; }
 
-nav a:hover::after{ width:100%; }
-nav a:hover{ color:#d91f26; }
+  .vuln-list { padding: 8px 0; flex: 1; }
 
-/* HERO */
-.hero {
-  text-align: center;
-  padding: 100px 20px 70px;
-}
+  .vuln-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s; font-size: 12px; color: var(--muted);
+  }
 
-.hero h1 {
-  font-size: 46px;
-  margin-bottom: 10px;
-}
+  .vuln-item:hover { background: var(--surface2); color: var(--text); }
+  .vuln-item.active { border-left-color: var(--accent); background: rgba(108,99,255,0.1); color: var(--text); }
 
-.hero span { color: #d91f26; }
+  .vuln-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--surface2); display: flex; align-items: center;
+    justify-content: center; font-size: 10px; font-weight: 700;
+    color: var(--muted); flex-shrink: 0; border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
 
-.hero p {
-  color: #9aa0a6;
-  max-width: 700px;
-  margin: 15px auto 30px;
-}
+  .vuln-item.active .vuln-num { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* BUTTON */
-.btn {
-  display: inline-block;
-  padding: 12px 26px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: bold;
-  color: #000;
-  background: #d91f26;
-  transition: .25s;
-  box-shadow: 0 0 18px rgba(57,255,20,.35);
-}
+  .vuln-severity {
+    margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
 
-.btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  background:#d91f26;
-}
+  .sev-critical { background: rgba(255,77,109,0.15); color: var(--red); }
+  .sev-high { background: rgba(255,107,53,0.15); color: #ff6b35; }
+  .sev-medium { background: rgba(255,209,102,0.15); color: var(--yellow); }
+  .sev-low { background: rgba(0,229,160,0.15); color: var(--green); }
 
-/* SECTION */
-section {
-  padding: 70px 20px;
-  max-width: 1200px;
-  margin: auto;
-  text-align: center;
-}
+  /* ── MAIN AREA ── */
+  #main { margin-left: 280px; min-height: 100vh; display: flex; flex-direction: column; }
 
-.courses h2 {
-  font-size: 34px;
-  margin-bottom: 40px;
-  color:#d91f26;
-}
+  /* ── TOP INFO BAR ── */
+  #info-bar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: flex-start;
+    gap: 16px; flex-wrap: wrap;
+  }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px;
-}
+  #info-bar .lab-title {
+    font-size: 16px; font-weight: 700; color: var(--text);
+  }
 
-/* CARD */
-.card-link{
-  text-decoration:none;
-  color:inherit;
-}
+  #info-bar .lab-meta {
+    font-size: 12px; color: var(--muted); margin-top: 2px;
+  }
 
-.card {
-  background: rgba(17,24,39,0.65);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 30px;
-  border: 1px solid #1f2937;
-  transition: all .35s ease;
-  position: relative;
-  overflow: hidden;
-  height:100%;
-}
+  #info-bar .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; border: 1px solid;
+  }
 
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(57,255,20,0.18), transparent);
-  opacity: 0;
-  transition: .4s;
-}
+  .hint-box {
+    background: rgba(108,99,255,0.08); border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #b8b0ff;
+    margin: 0 24px 0 auto; max-width: 340px; line-height: 1.5;
+  }
 
-.card:hover::before { opacity: 1; }
+  .hint-box strong { color: var(--accent); }
 
-.card:hover {
-  transform: translateY(-10px) scale(1.025);
-  border-color:#d91f26;
-  box-shadow: 0 0 35px rgba(57,255,20,0.25);
-}
+  /* ── SHOP FRAME ── */
+  #shop-frame {
+    flex: 1; background: var(--shop-bg); overflow: auto;
+    display: flex; flex-direction: column;
+  }
 
-.card h3 {
-  color: #d91f26;
-  font-size: 22px;
-}
+  /* ── SHOP NAVBAR ── */
+  .shop-nav {
+    background: var(--shop-nav); padding: 0 32px;
+    display: flex; align-items: center; gap: 24px; height: 58px;
+    position: sticky; top: 0; z-index: 50;
+  }
 
-.card p {
-  color: #9aa0a6;
-  font-size: 14px;
-}
+  .shop-logo {
+    font-size: 20px; font-weight: 800; color: #fff;
+    letter-spacing: -0.5px; flex-shrink: 0;
+  }
 
-.card ul {
-  list-style: none;
-  padding: 0;
-  margin: 18px 0;
-  text-align: left;
-}
+  .shop-logo span { color: var(--shop-accent); }
 
-.card li {
-  margin-bottom: 8px;
-  color: #cfcfcf;
-  font-size: 14px;
-}
+  .shop-nav-links {
+    display: flex; gap: 20px; list-style: none; flex: 1;
+  }
 
-.badge {
-  position: absolute;
-  top: 16px;
-  right: -42px;
-  background: #ff0033;
-  color: #fff;
-  padding: 6px 40px;
-  font-size: 12px;
-  transform: rotate(45deg);
-  font-weight: bold;
-}
+  .shop-nav-links a {
+    color: #aaa; text-decoration: none; font-size: 13px; font-weight: 500;
+    transition: color 0.15s;
+  }
 
-.footer {
-  text-align: center;
-  padding: 40px;
-  color: #2b69e6;
-  font-size: 13px;
-}
+  .shop-nav-links a:hover { color: #fff; }
 
-@media(max-width:768px){
-  header{ padding:14px 20px; }
-  .hero h1{ font-size:34px; }
-}
+  .shop-nav-right { display: flex; align-items: center; gap: 14px; }
+
+  .shop-search {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; padding: 7px 14px; border-radius: 6px; font-size: 13px;
+    outline: none; width: 180px; transition: all 0.2s;
+  }
+
+  .shop-search:focus { background: rgba(255,255,255,0.12); border-color: var(--shop-accent); }
+  .shop-search::placeholder { color: #666; }
+
+  .btn-cart {
+    background: var(--shop-accent); color: #fff; border: none;
+    padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── SHOP SECTIONS ── */
+  .shop-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 60px 32px; text-align: center; color: #fff; position: relative; overflow: hidden;
+  }
+
+  .shop-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 70% 50%, rgba(233,69,96,0.2) 0%, transparent 60%);
+  }
+
+  .shop-hero h1 {
+    font-size: 36px; font-weight: 800; margin-bottom: 12px;
+    position: relative;
+  }
+
+  .shop-hero p { color: #aaa; font-size: 15px; position: relative; margin-bottom: 20px; }
+
+  .btn-shop {
+    background: var(--shop-accent); color: #fff; border: none;
+    padding: 12px 32px; border-radius: 8px; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.2s; position: relative;
+  }
+
+  .btn-shop:hover { opacity: 0.9; }
+
+  .section-wrap { padding: 32px; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--shop-text); margin-bottom: 20px; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+  .product-card {
+    background: var(--shop-card); border: 1px solid var(--shop-border);
+    border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+  .product-img {
+    height: 160px; background: linear-gradient(135deg, #e0e0f0, #c8c8e8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; position: relative;
+  }
+
+  .product-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--shop-accent); color: #fff;
+    font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+  }
+
+  .product-info { padding: 14px; }
+  .product-name { font-size: 13px; font-weight: 600; color: var(--shop-text); margin-bottom: 4px; }
+  .product-price { font-size: 16px; font-weight: 800; color: var(--shop-accent); }
+  .product-old { text-decoration: line-through; color: var(--shop-muted); font-size: 12px; margin-left: 6px; }
+
+  .btn-add {
+    width: 100%; margin-top: 10px; padding: 8px; border-radius: 6px;
+    background: var(--shop-nav); color: #fff; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+
+  .btn-add:hover { opacity: 0.8; }
+
+  /* ── LAB CONTENT PANELS ── */
+  #lab-panel {
+    display: none; flex-direction: column;
+    background: var(--shop-bg); min-height: 100%;
+  }
+
+  #lab-panel.visible { display: flex; }
+
+  .lab-section {
+    padding: 28px 32px; border-bottom: 1px solid var(--shop-border);
+    max-width: 100%;
+  }
+
+  .lab-section h3 { font-size: 14px; font-weight: 700; color: var(--shop-text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .lab-form { display: flex; flex-direction: column; gap: 12px; max-width: 480px; }
+
+  .lab-input, .lab-select, .lab-textarea {
+    padding: 10px 14px; border: 1px solid var(--shop-border);
+    border-radius: 8px; font-size: 14px; color: var(--shop-text);
+    outline: none; background: #fff; width: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .lab-input:focus, .lab-select:focus, .lab-textarea:focus { border-color: var(--accent); }
+  .lab-textarea { height: 90px; resize: vertical; font-family: inherit; }
+
+  .lab-btn {
+    padding: 10px 22px; border-radius: 8px; border: none;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    background: var(--accent); color: #fff; transition: opacity 0.2s;
+    align-self: flex-start;
+  }
+
+  .lab-btn:hover { opacity: 0.85; }
+  .lab-btn.danger { background: var(--red); }
+  .lab-btn.success { background: #00b87c; }
+
+  .output-box {
+    background: #1a1a2e; border-radius: 10px; padding: 16px;
+    font-family: 'Courier New', monospace; font-size: 13px;
+    min-height: 60px; color: var(--green); white-space: pre-wrap;
+    word-break: break-all; max-height: 220px; overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+
+  .vuln-flag {
+    background: rgba(255,77,109,0.1); border: 1.5px solid var(--red);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--red); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .safe-flag {
+    background: rgba(0,229,160,0.1); border: 1.5px solid var(--green);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--green); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .explain-box {
+    background: #f7f7fd; border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 14px;
+    font-size: 13px; color: #333; line-height: 1.7;
+  }
+
+  .explain-box strong { color: var(--accent); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .mini-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+
+  .mini-table th {
+    background: var(--shop-nav); color: #fff; padding: 8px 12px; text-align: left;
+  }
+
+  .mini-table td { padding: 8px 12px; border-bottom: 1px solid var(--shop-border); color: var(--shop-text); }
+  .mini-table tr:nth-child(even) td { background: var(--shop-card); }
+
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--shop-border); margin-bottom: 16px; }
+
+  .tab-btn {
+    padding: 8px 18px; border: none; background: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--shop-muted);
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── ASSESSMENT PANEL ── */
+  #final-panel { display: none; padding: 32px; background: var(--shop-bg); }
+  #final-panel.visible { display: block; }
+
+  .score-card {
+    background: var(--surface); border-radius: 16px; padding: 28px;
+    display: flex; align-items: center; gap: 24px; margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+
+  .score-ring {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: 6px solid var(--accent); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+    font-size: 22px; font-weight: 800; color: var(--accent);
+  }
+
+  .vuln-summary-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+
+  .vuln-summary-item {
+    background: var(--surface2); border-radius: 8px; padding: 12px;
+    border: 1px solid var(--border); display: flex; justify-content: space-between;
+    align-items: center; font-size: 12px; color: var(--muted);
+  }
+
+  .vuln-summary-item .name { font-weight: 600; color: var(--text); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── OVERLAY for XSS demo ── */
+  #vuln-overlay {
+    display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: #ff4d6d; color: #fff; padding: 14px 28px; border-radius: 10px;
+    font-size: 15px; font-weight: 700; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .progress-bar-wrap {
+    background: var(--shop-border); border-radius: 99px; height: 8px; overflow: hidden; width: 100%;
+  }
+
+  .progress-bar-fill {
+    height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+  }
+
+  label { font-size: 13px; color: var(--shop-muted); font-weight: 500; }
+
+  .chip {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; margin: 2px;
+  }
+
+  .chip-purple { background: rgba(108,99,255,0.15); color: var(--accent); }
+  .chip-red { background: rgba(255,77,109,0.15); color: var(--red); }
+  .chip-green { background: rgba(0,229,160,0.15); color: var(--green); }
+
+  @media (max-width: 900px) {
+    #control-panel { width: 220px; }
+    #main { margin-left: 220px; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
-
 <body>
 
-<header>
-  <div class="logo">
-    <img src="logo.png" alt="Redspector Logo">
-    <span>REDSPECTOR</span>
+<!-- ── CONTROL PANEL ── -->
+<div id="control-panel">
+  <div id="cp-header">
+    <div class="badge">🔐 SECURITY LAB</div>
+    <h2>ShopSmart VulnLab</h2>
+    <p>26 vulnerabilities · Interactive demos</p>
   </div>
-  <nav>
-    <a href="Syllabus.html">Syllabus</a>
-    <a href="#">Labs</a>
-    <a href="login.html">Apply</a>
-  </nav>
-</header>
-
-<!-- HERO -->
-<section class="hero">
-  <h1>Precision in <span>Offense</span></h1>
-  <p>
-    Red Team–only cybersecurity academy focused on real-world web application
-    penetration testing and offensive security.
-  </p>
-  <a href="apply.html" class="btn">Apply Now</a>
-</section>
-
-<!-- WHAT WE TEACH -->
-<section>
-  <h2>What We Teach</h2>
-  <p>Everything is built around real-world web application penetration testing and red team methodology.</p>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Web Application Pentesting</h3>
-      <p>HTML, CSS, JavaScript, SQLi, XSS, IDOR, authentication bypass, business logic vulnerabilities.</p>
-    </div>
-
-    <div class="card">
-      <h3>Programming for Offense</h3>
-      <p>Python, Java, C and C++ fundamentals to understand internals and build exploits.</p>
-    </div>
-
-    <div class="card">
-      <h3>Red Team Operations</h3>
-      <p>Initial access, privilege escalation, lateral movement, OPSEC and mindset.</p>
-    </div>
-
-    <div class="card">
-      <h3>Hands-on Labs</h3>
-      <p>PortSwigger labs, TryHackMe free rooms, and custom Redspector power labs.</p>
-    </div>
-  </div>
-</section>
-
-<!-- COURSES -->
-<section class="courses">
-  <h2>🔥 Redspector Training Programs</h2>
-
-  <div class="grid">
-
-    <a href="indexBASIC-Starter-Hacker.html" class="card-link">
-      <div class="card">
-        <h3>BASIC — Start Hacking</h3>
-        <p>Perfect for beginners starting cybersecurity from zero.</p>
-
-        <ul>
-          <li>✔ Web & Internet Fundamentals</li>
-          <li>✔ HTML & CSS Basics for Hackers</li>
-          <li>✔ JavaScript Basics</li>
-          <li>✔ SQL Fundamentals</li>
-          <li>✔OWASP Top 10 Overview</li>
-          <li>❌ Not included:</li>
-          <li>❌ Live doubt clearing</li>
-          <li>❌ Personal mentorship</li>
-          <li>❌ Advanced labs</li>
-          <li>❌Certificate</li>
-        </ul>
-
-        <p><strong style="color:#d91f26;">Duration: 2 Months</strong></p>
-      </div>
-    </a>
-
-    <a href="Web Pentester.html" class="card-link">
-      <div class="card">
-        <div class="badge">MOST POPULAR</div>
-        <h3>PRO — Web Pentester</h3>
-        <p>Real-world web application penetration testing track.</p>
-
-        <ul>
-          <li>✔ Web & Internet Fundamentals</li>
-          <li>✔ HTML & CSS Basics for Hackers</li>
-          <li>✔ JavaScript Basics</li>
-          <li>✔ SQL Fundamentals</li>
-          <li>✔ OWASP Top 10 Overview</li>
-          <li>✔ Reconnaissance & Information Gathering</li>
-          <li>✔ Burp Suite Mastery </li>
-          <li>✔ Advanced OWASP Exploitation</li>
-          <li>✔ PortSwigger Labs Walkthrough</li>
-          <li>✔ Real-World Web Pentest Methodology</li> </li>
-          
-        </ul>
-
-        <p><strong style="color:#d91f26;">Duration: 5 Months</strong></p>
-      </div>
-    </a>
-
-  </div>
-</section>
-
-<div class="footer">
-  © 2026 Redspector. All rights reserved.
+  <div class="vuln-list" id="vuln-list"></div>
 </div>
 
+<!-- ── MAIN ── -->
+<div id="main">
+
+  <!-- Info Bar -->
+  <div id="info-bar">
+    <div>
+      <div class="lab-title" id="bar-title">🏪 ShopSmart — Security Training Lab</div>
+      <div class="lab-meta" id="bar-meta">Browse the store or select a vulnerability from the panel →</div>
+    </div>
+    <div class="hint-box" id="hint-box">
+      👋 <strong>Welcome!</strong> This is an intentionally vulnerable e-commerce site. Select any vulnerability on the left to explore it in an interactive demo. All simulations are safe and educational.
+    </div>
+  </div>
+
+  <!-- Overlay for XSS demo -->
+  <div id="vuln-overlay">⚠️ XSS Alert Triggered!</div>
+
+  <!-- Shop Frame -->
+  <div id="shop-frame">
+
+    <!-- NAV -->
+    <nav class="shop-nav">
+      <div class="shop-logo">Shop<span>Smart</span></div>
+      <ul class="shop-nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Electronics</a></li>
+        <li><a href="#">Clothing</a></li>
+        <li><a href="#">Admin</a></li>
+        <li><a href="#">API Docs</a></li>
+      </ul>
+      <div class="shop-nav-right">
+        <input class="shop-search" placeholder="Search products…" id="search-bar">
+        <button class="btn-cart">🛒 Cart (0)</button>
+      </div>
+    </nav>
+
+    <!-- HOME VIEW -->
+    <div id="home-view">
+      <div class="shop-hero">
+        <h1>Mega Sale — Up to 70% Off!</h1>
+        <p>Free delivery on orders over ₹999 · Shop 10,000+ products</p>
+        <button class="btn-shop">Shop Now</button>
+      </div>
+
+      <div class="section-wrap">
+        <div class="section-title">⚡ Featured Products</div>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+    </div>
+
+    <!-- LAB PANEL (injected per vulnerability) -->
+    <div id="lab-panel"></div>
+
+    <!-- FINAL ASSESSMENT PANEL -->
+    <div id="final-panel">
+      <div class="section-title">📊 Final Security Assessment</div>
+      <div class="score-card">
+        <div class="score-ring" id="final-score">0%</div>
+        <div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;">Security Posture Report</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;">
+            ShopSmart has been analysed across <strong style="color:var(--text)">25 vulnerability categories</strong>.
+            Review results below and prioritise fixes by severity.
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="chip chip-red">9 Critical/High</span>
+            <span class="chip chip-purple">10 Medium</span>
+            <span class="chip chip-green">6 Low</span>
+          </div>
+        </div>
+      </div>
+      <div class="vuln-summary-grid" id="final-grid"></div>
+    </div>
+
+  </div><!-- /shop-frame -->
+</div><!-- /main -->
+
+<script>
+// ────────────────────────────────────
+// DATA
+// ────────────────────────────────────
+const VULNS = [
+  { id: 1,  title: "Information Disclosure",         sev: "medium",   icon: "📋" },
+  { id: 2,  title: "Security Headers Missing",        sev: "medium",   icon: "🛡️" },
+  { id: 3,  title: "Open Redirect",                  sev: "medium",   icon: "↩️" },
+  { id: 4,  title: "HTML Injection",                  sev: "medium",   icon: "🖊️" },
+  { id: 5,  title: "Reflected XSS",                  sev: "high",     icon: "⚡" },
+  { id: 6,  title: "DOM-Based XSS",                  sev: "high",     icon: "🌐" },
+  { id: 7,  title: "Cookie Analysis",                 sev: "medium",   icon: "🍪" },
+  { id: 8,  title: "Weak Password Policy",            sev: "medium",   icon: "🔑" },
+  { id: 9,  title: "Broken Logout",                   sev: "high",     icon: "🔓" },
+  { id: 10, title: "Directory Listing Exposure",      sev: "medium",   icon: "📂" },
+  { id: 11, title: "IDOR",                            sev: "high",     icon: "👤" },
+  { id: 12, title: "Clickjacking",                    sev: "low",      icon: "🖱️" },
+  { id: 13, title: "CORS Misconfiguration",           sev: "high",     icon: "🌍" },
+  { id: 14, title: "Parameter Tampering",             sev: "high",     icon: "🔧" },
+  { id: 15, title: "Business Logic Flaws",            sev: "high",     icon: "💼" },
+  { id: 16, title: "Default Credentials",             sev: "critical", icon: "🔐" },
+  { id: 17, title: "Debug Mode Exposure",             sev: "medium",   icon: "🐛" },
+  { id: 18, title: "Sensitive Data Exposure",         sev: "critical", icon: "💳" },
+  { id: 19, title: "Forced Browsing",                 sev: "medium",   icon: "📎" },
+  { id: 20, title: "HTTP Method Misconfiguration",    sev: "medium",   icon: "📡" },
+  { id: 21, title: "API Authorization Flaws",         sev: "critical", icon: "🔌" },
+  { id: 22, title: "Session Fixation",                sev: "high",     icon: "🪪" },
+  { id: 23, title: "Insecure Session Management",     sev: "high",     icon: "🗝️" },
+  { id: 24, title: "Missing Rate Limiting",           sev: "medium",   icon: "⏱️" },
+  { id: 25, title: "Client-Side Validation Bypass",  sev: "medium",   icon: "✅" },
+  { id: 26, title: "Final Security Assessment",       sev: "low",      icon: "📊" },
+];
+
+const PRODUCTS = [
+  { name:"Wireless Earbuds Pro", price:"₹2,499", old:"₹5,999", badge:"SALE", emoji:"🎧" },
+  { name:"Smart Watch Series X", price:"₹8,999", old:"₹14,999", badge:"HOT", emoji:"⌚" },
+  { name:"4K Action Camera", price:"₹12,499", old:"₹19,999", badge:"NEW", emoji:"📷" },
+  { name:"Gaming Mechanical Keyboard", price:"₹3,299", old:"₹5,499", badge:"", emoji:"⌨️" },
+  { name:"Laptop Backpack 35L", price:"₹1,299", old:"₹2,499", badge:"DEAL", emoji:"🎒" },
+  { name:"USB-C Hub 8-in-1", price:"₹1,899", old:"₹3,199", badge:"", emoji:"🔌" },
+  { name:"Portable Power Bank 20000mAh", price:"₹1,499", old:"₹2,999", badge:"HOT", emoji:"🔋" },
+  { name:"RGB LED Strip 5m", price:"₹699", old:"₹1,299", badge:"SALE", emoji:"💡" },
+];
+
+// ────────────────────────────────────
+// BUILD PRODUCT GRID
+// ────────────────────────────────────
+const pgEl = document.getElementById('product-grid');
+PRODUCTS.forEach(p => {
+  pgEl.innerHTML += `
+  <div class="product-card">
+    <div class="product-img">
+      ${p.emoji}
+      ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+    </div>
+    <div class="product-info">
+      <div class="product-name">${p.name}</div>
+      <div><span class="product-price">${p.price}</span><span class="product-old">${p.old}</span></div>
+      <button class="btn-add">Add to Cart</button>
+    </div>
+  </div>`;
+});
+
+// ────────────────────────────────────
+// BUILD SIDEBAR
+// ────────────────────────────────────
+const listEl = document.getElementById('vuln-list');
+const SEV_CLASS = { critical:'sev-critical', high:'sev-high', medium:'sev-medium', low:'sev-low' };
+
+VULNS.forEach(v => {
+  const el = document.createElement('div');
+  el.className = 'vuln-item';
+  el.dataset.id = v.id;
+  el.innerHTML = `
+    <div class="vuln-num">${v.id}</div>
+    <span style="flex:1;line-height:1.3">${v.icon} ${v.title}</span>
+    <span class="vuln-severity ${SEV_CLASS[v.sev]}">${v.sev}</span>`;
+  el.addEventListener('click', () => loadLab(v.id));
+  listEl.appendChild(el);
+});
+
+// ────────────────────────────────────
+// NAVIGATION
+// ────────────────────────────────────
+let active = null;
+
+function loadLab(id) {
+  document.querySelectorAll('.vuln-item').forEach(el => el.classList.toggle('active', +el.dataset.id === id));
+  active = id;
+
+  const home = document.getElementById('home-view');
+  const panel = document.getElementById('lab-panel');
+  const final = document.getElementById('final-panel');
+
+  home.style.display = 'none';
+  panel.classList.remove('visible');
+  final.classList.remove('visible');
+
+  const v = VULNS.find(x => x.id === id);
+
+  document.getElementById('bar-title').textContent = `${v.icon} Lab ${id}: ${v.title}`;
+  document.getElementById('bar-meta').textContent = `Severity: ${v.sev.toUpperCase()} · Simulate the vulnerability and read the explanation below.`;
+  document.getElementById('hint-box').innerHTML = getHint(id);
+
+  if (id === 26) {
+    buildFinalAssessment();
+    final.classList.add('visible');
+    return;
+  }
+
+  panel.innerHTML = buildLabHTML(id);
+  panel.classList.add('visible');
+  attachHandlers(id);
+}
+
+// ────────────────────────────────────
+// HINTS
+// ────────────────────────────────────
+function getHint(id) {
+  const hints = {
+    1: "💡 <strong>Hint:</strong> Click 'Fetch Response' to see what the server leaks in HTTP headers and error messages.",
+    2: "💡 <strong>Hint:</strong> Check which security headers are absent from the response. Each missing header is an attack vector.",
+    3: "💡 <strong>Hint:</strong> Try entering a redirect URL and see how the app processes it without validation.",
+    4: "💡 <strong>Hint:</strong> Enter HTML tags like <code>&lt;b&gt;bold&lt;/b&gt;</code> in the review field and see if the browser renders them.",
+    5: "💡 <strong>Hint:</strong> Type <code>&lt;script&gt;alert('xss')&lt;/script&gt;</code> in the search box and click Search.",
+    6: "💡 <strong>Hint:</strong> The URL hash <code>#product=...</code> is read by JS and written to the DOM without sanitisation.",
+    7: "💡 <strong>Hint:</strong> Inspect cookie attributes — missing HttpOnly, Secure, or SameSite flags are vulnerabilities.",
+    8: "💡 <strong>Hint:</strong> Try passwords like '123', 'abc', or 'password' — the site accepts them all.",
+    9: "💡 <strong>Hint:</strong> Click Logout, then click 'Access Dashboard' — the session token still works.",
+    10: "💡 <strong>Hint:</strong> Browse to simulated paths like <code>/admin/</code> or <code>/uploads/</code> to see exposed listings.",
+    11: "💡 <strong>Hint:</strong> Change your order ID from 1001 to 1002 — you can see another user's order.",
+    12: "💡 <strong>Hint:</strong> The page can be embedded in an invisible iframe. Try toggling the iframe wrapper.",
+    13: "💡 <strong>Hint:</strong> The API returns <code>Access-Control-Allow-Origin: *</code> — any site can read your data.",
+    14: "💡 <strong>Hint:</strong> Change the hidden 'price' field from ₹2499 to ₹1 and submit the order.",
+    15: "💡 <strong>Hint:</strong> Apply a coupon code multiple times or try negative quantities to exploit business logic.",
+    16: "💡 <strong>Hint:</strong> Try admin/admin, admin/password, or root/root on the admin login form.",
+    17: "💡 <strong>Hint:</strong> The debug endpoint reveals server internals, stack traces, and environment variables.",
+    18: "💡 <strong>Hint:</strong> The checkout API response includes full card numbers and CVVs in plain text.",
+    19: "💡 <strong>Hint:</strong> Directly type paths like <code>/admin/users.json</code> or <code>/backup.sql</code>.",
+    20: "💡 <strong>Hint:</strong> The server accepts DELETE and PUT on endpoints that should be read-only.",
+    21: "💡 <strong>Hint:</strong> Access <code>/api/v1/users</code> without an auth token — it returns all user data.",
+    22: "💡 <strong>Hint:</strong> The login form accepts a preset session ID and doesn't regenerate it after login.",
+    23: "💡 <strong>Hint:</strong> Session token is stored in localStorage, never rotated, and has no expiry.",
+    24: "💡 <strong>Hint:</strong> Spam the login button — no lockout, no CAPTCHA, no delay between attempts.",
+    25: "💡 <strong>Hint:</strong> The 'Age 18+' checkbox is checked server-side only in JS. Open DevTools and bypass it.",
+    26: "📊 <strong>Assessment:</strong> View the full vulnerability report and risk scores for ShopSmart."
+  };
+  return hints[id] || '';
+}
+
+// ────────────────────────────────────
+// LAB HTML BUILDER
+// ────────────────────────────────────
+function buildLabHTML(id) {
+  const labs = {
+
+    1: `
+      <div class="lab-section">
+        <h3>Information Disclosure</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The server reveals sensitive information through response headers, error messages, and API responses.</p>
+        <div class="lab-form">
+          <label>Endpoint to probe</label>
+          <input class="lab-input" id="l1-url" value="/api/v1/products/99999">
+          <button class="lab-btn" id="l1-btn">Fetch Response</button>
+        </div>
+        <div style="margin-top:16px" id="l1-out" class="output-box" style="display:none"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> The server returned its framework version (<code>Express 4.17.1</code>), OS details, internal file paths, and a stack trace — all in the error response. Attackers use this fingerprint to look up known CVEs.<br><br>
+          <strong>Fix:</strong> Remove the <code>X-Powered-By</code> header, disable verbose error messages in production, and return generic error responses to clients.
+        </div>
+      </div>`,
+
+    2: `
+      <div class="lab-section">
+        <h3>Security Headers Missing</h3>
+        <div class="output-box" id="l2-out">Click "Scan Headers" to check the response…</div>
+        <button class="lab-btn" id="l2-btn" style="margin-top:12px">Scan Headers</button>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Missing Headers:</strong> Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options, Permissions-Policy.<br><br>
+          <strong>Fix:</strong> Set all security headers via your web server config or a middleware like <code>helmet.js</code> in Node.
+        </div>
+      </div>`,
+
+    3: `
+      <div class="lab-section">
+        <h3>Open Redirect</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">After login, the app redirects to whatever URL is in the <code>?next=</code> parameter without validation.</p>
+        <div class="lab-form">
+          <label>Login redirect URL (next=)</label>
+          <input class="lab-input" id="l3-url" value="https://evil-phishing-site.com/fake-login">
+          <button class="lab-btn danger" id="l3-btn">Simulate Redirect</button>
+        </div>
+        <div id="l3-out" style="margin-top:12px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> The app redirected to an external domain. Attackers craft URLs like <code>shopsmart.com/login?next=evil.com</code> — users trust the domain and follow the link, landing on a phishing page.<br><br>
+          <strong>Fix:</strong> Only allow redirects to relative paths or a whitelist of trusted domains. Validate the <code>next</code> parameter server-side.
+        </div>
+      </div>`,
+
+    4: `
+      <div class="lab-section">
+        <h3>HTML Injection</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The product review form renders user input as raw HTML.</p>
+        <div class="lab-form">
+          <label>Write a product review</label>
+          <textarea class="lab-textarea" id="l4-review">&lt;h2 style="color:red"&gt;Free iPhone giveaway! Click here →&lt;/h2&gt;&lt;a href="https://phish.com"&gt;Claim now&lt;/a&gt;</textarea>
+          <button class="lab-btn" id="l4-btn">Post Review</button>
+        </div>
+        <div id="l4-out" style="margin-top:16px;padding:14px;background:#fff;border:1px solid #ddd;border-radius:8px;font-size:13px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> The review was rendered as actual HTML. An attacker can inject fake buttons, links, or forms to deceive other users.<br><br>
+          <strong>Fix:</strong> Escape HTML entities on output. Use <code>textContent</code> instead of <code>innerHTML</code>, or a sanitiser like DOMPurify.
+        </div>
+      </div>`,
+
+    5: `
+      <div class="lab-section">
+        <h3>Reflected XSS</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">Search input is reflected back without sanitisation, allowing script injection.</p>
+        <div class="lab-form">
+          <label>Search query</label>
+          <input class="lab-input" id="l5-input" value='&lt;img src=x onerror="document.getElementById(&apos;vuln-overlay&apos;).style.display=&apos;block&apos;;setTimeout(()=>{document.getElementById(&apos;vuln-overlay&apos;).style.display=&apos;none&apos;},2500)"&gt;'>
+          <button class="lab-btn danger" id="l5-btn">Search (Trigger XSS)</button>
+        </div>
+        <div id="l5-out" style="margin-top:12px;font-size:13px;color:#555"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> The search query was embedded in the page response without encoding. The <code>onerror</code> handler on a broken image tag executed JavaScript.<br><br>
+          <strong>Fix:</strong> HTML-encode all user-supplied data before inserting it into HTML. Use a templating engine that auto-escapes output. Implement a strict Content-Security-Policy.
+        </div>
+      </div>`,
+
+    6: `
+      <div class="lab-section">
+        <h3>DOM-Based XSS</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The page reads <code>window.location.hash</code> and writes it to the DOM unsafely.</p>
+        <div class="lab-form">
+          <label>Simulate URL hash (normally in address bar)</label>
+          <input class="lab-input" id="l6-hash" value='&lt;script&gt;alert("DOM XSS!")&lt;/script&gt;'>
+          <button class="lab-btn danger" id="l6-btn">Inject via Hash</button>
+        </div>
+        <div id="l6-out" style="margin-top:12px;padding:12px;background:#fff8f8;border:1px solid #fcc;border-radius:8px;font-size:13px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> Client-side JavaScript read the URL hash and inserted it into the DOM via <code>innerHTML</code>. The server never saw this input — it never touched the network — making it invisible to server-side WAFs.<br><br>
+          <strong>Fix:</strong> Never pass URL fragments into <code>innerHTML</code>. Use <code>textContent</code> or DOMPurify. DOM XSS requires client-side defences.
+        </div>
+      </div>`,
+
+    7: `
+      <div class="lab-section">
+        <h3>Cookie Analysis</h3>
+        <div class="lab-form">
+          <button class="lab-btn" id="l7-btn">Set Insecure Cookie & Inspect</button>
+        </div>
+        <div id="l7-out" class="output-box" style="margin-top:12px">Click the button to set and inspect cookies…</div>
+      </div>
+      <div class="lab-section">
+        <table class="mini-table">
+          <thead><tr><th>Attribute</th><th>ShopSmart Value</th><th>Secure Value</th><th>Risk</th></tr></thead>
+          <tbody>
+            <tr><td>HttpOnly</td><td>❌ Missing</td><td>✅ Set</td><td><span class="vuln-severity sev-high">High</span></td></tr>
+            <tr><td>Secure</td><td>❌ Missing</td><td>✅ Set</td><td><span class="vuln-severity sev-high">High</span></td></tr>
+            <tr><td>SameSite</td><td>❌ None</td><td>✅ Strict</td><td><span class="vuln-severity sev-medium">Medium</span></td></tr>
+            <tr><td>Expiry</td><td>⚠️ 30 days</td><td>✅ Session</td><td><span class="vuln-severity sev-medium">Medium</span></td></tr>
+            <tr><td>Domain</td><td>⚠️ .shopsmart.com</td><td>✅ Exact</td><td><span class="vuln-severity sev-low">Low</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Set <code>HttpOnly</code> (blocks JS access), <code>Secure</code> (HTTPS only), <code>SameSite=Strict</code> (blocks CSRF), and short expiry for session cookies.
+        </div>
+      </div>`,
+
+    8: `
+      <div class="lab-section">
+        <h3>Weak Password Policy</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The registration form accepts any password, including single-character ones.</p>
+        <div class="lab-form">
+          <label>Try a weak password</label>
+          <input class="lab-input" id="l8-pass" placeholder="Enter any password…" type="text">
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="l8-bar" style="width:0%"></div></div>
+          <div id="l8-strength" style="font-size:12px;color:#888">Enter a password to see strength</div>
+          <button class="lab-btn" id="l8-btn">Register (No Validation)</button>
+        </div>
+        <div id="l8-out" style="margin-top:12px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Enforce minimum 12 characters, mixed case, numbers, and symbols. Check against <a href="https://haveibeenpwned.com" target="_blank">HIBP</a> for breached passwords. Use a zxcvbn-style strength estimator client-side.
+        </div>
+      </div>`,
+
+    9: `
+      <div class="lab-section">
+        <h3>Broken Logout</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">After logging out, the session token remains valid server-side.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="lab-btn success" id="l9-login">1. Log In</button>
+          <button class="lab-btn danger" id="l9-logout">2. Log Out</button>
+          <button class="lab-btn" id="l9-access">3. Access Dashboard (Post-Logout)</button>
+        </div>
+        <div id="l9-out" class="output-box" style="margin-top:12px">Click buttons in order…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> Logout only cleared the client-side cookie. The server didn't invalidate the session token. Step 3 still returned protected data.<br><br>
+          <strong>Fix:</strong> On logout, destroy the session server-side, add the token to a blocklist, and clear all auth cookies. For JWTs, use a short expiry and maintain a revocation list.
+        </div>
+      </div>`,
+
+    10: `
+      <div class="lab-section">
+        <h3>Directory Listing Exposure</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">These server paths are accessible without authentication and show a file listing.</p>
+        <div class="lab-form">
+          <label>Browse simulated paths</label>
+          <select class="lab-select" id="l10-path">
+            <option>/admin/</option>
+            <option>/uploads/</option>
+            <option>/backup/</option>
+            <option>/logs/</option>
+            <option>/.git/</option>
+          </select>
+          <button class="lab-btn" id="l10-btn">Browse Path</button>
+        </div>
+        <div id="l10-out" class="output-box">Select a path and browse…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Disable directory listing in your web server config (<code>Options -Indexes</code> in Apache). Use deny-by-default routing. Never expose <code>.git</code>, backups, or log files publicly.
+        </div>
+      </div>`,
+
+    11: `
+      <div class="lab-section">
+        <h3>IDOR — Insecure Direct Object Reference</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">Change the order ID to access another user's order.</p>
+        <div class="lab-form">
+          <label>Your Order ID</label>
+          <input class="lab-input" id="l11-id" value="1001" type="number">
+          <button class="lab-btn" id="l11-btn">View Order Details</button>
+        </div>
+        <div id="l11-out" class="output-box">Enter an order ID and click View…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> The API <code>/api/orders/{id}</code> only checked if the user was logged in — not whether <em>this order belongs to them</em>. Change 1001 → 1002 to see a different user's data.<br><br>
+          <strong>Fix:</strong> Always verify that the authenticated user owns the requested object. Never rely on obscurity of IDs.
+        </div>
+      </div>`,
+
+    12: `
+      <div class="lab-section">
+        <h3>Clickjacking</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The site lacks <code>X-Frame-Options</code>, allowing it to be framed by a malicious page.</p>
+        <div class="lab-form">
+          <button class="lab-btn" id="l12-btn">Show Clickjacking Demo</button>
+        </div>
+        <div id="l12-out" style="margin-top:12px;position:relative;width:420px;height:200px;background:#f0f0f0;border-radius:10px;overflow:hidden;display:none">
+          <div style="position:absolute;inset:0;background:rgba(255,0,0,0.08);z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none">
+            <div style="background:rgba(255,50,50,0.85);color:#fff;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:700">⚠️ Invisible overlay here — attacker controls clicks</div>
+          </div>
+          <div style="position:absolute;inset:0;padding:24px;z-index:1">
+            <div style="font-size:14px;font-weight:700;margin-bottom:12px">🏪 ShopSmart — Confirm Transfer</div>
+            <div style="font-size:13px;color:#555;margin-bottom:12px">Transfer ₹50,000 to account ending 9087?</div>
+            <button style="background:#e94560;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-weight:700;cursor:pointer">Confirm</button>
+          </div>
+        </div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Add <code>X-Frame-Options: DENY</code> or <code>Content-Security-Policy: frame-ancestors 'none'</code>. This prevents the page from being embedded in any iframe.
+        </div>
+      </div>`,
+
+    13: `
+      <div class="lab-section">
+        <h3>CORS Misconfiguration</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The API returns <code>Access-Control-Allow-Origin: *</code> for all endpoints, including authenticated ones.</p>
+        <div class="lab-form">
+          <button class="lab-btn" id="l13-btn">Simulate Cross-Origin Request</button>
+        </div>
+        <div id="l13-out" class="output-box" style="margin-top:12px">Click to simulate…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>What happened?</strong> <code>Access-Control-Allow-Origin: *</code> on an authenticated endpoint allows any website to make requests on behalf of your users (via their browser) and read the response.<br><br>
+          <strong>Fix:</strong> Restrict CORS to trusted origins only. Never use <code>*</code> with <code>credentials: true</code>. Validate the <code>Origin</code> header against an allowlist.
+        </div>
+      </div>`,
+
+    14: `
+      <div class="lab-section">
+        <h3>Parameter Tampering</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The order form contains a hidden price field that is trusted by the server.</p>
+        <div class="lab-form">
+          <label>Product: Wireless Earbuds Pro</label>
+          <label>Hidden price field value (edit this!)</label>
+          <input class="lab-input" id="l14-price" value="2499" type="number">
+          <label>Quantity</label>
+          <input class="lab-input" id="l14-qty" value="1" type="number">
+          <button class="lab-btn danger" id="l14-btn">Place Order (Tampered)</button>
+        </div>
+        <div id="l14-out" style="margin-top:12px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> NEVER trust price, discount, or any financial value from the client. Always compute prices server-side from a canonical product database. Treat all client input as untrusted.
+        </div>
+      </div>`,
+
+    15: `
+      <div class="lab-section">
+        <h3>Business Logic Flaws</h3>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="coupon">Coupon Reuse</button>
+          <button class="tab-btn" data-tab="neg">Negative Quantity</button>
+          <button class="tab-btn" data-tab="refund">Double Refund</button>
+        </div>
+        <div id="tab-coupon" class="tab-content active">
+          <div class="lab-form">
+            <label>Coupon code</label>
+            <input class="lab-input" id="l15-coupon" value="SAVE10">
+            <button class="lab-btn" id="l15-coupon-btn">Apply Coupon</button>
+          </div>
+          <div id="l15-coupon-out" style="margin-top:10px"></div>
+        </div>
+        <div id="tab-neg" class="tab-content">
+          <div class="lab-form">
+            <label>Product quantity (try -5)</label>
+            <input class="lab-input" id="l15-qty" value="-5" type="number">
+            <button class="lab-btn" id="l15-qty-btn">Add to Cart</button>
+          </div>
+          <div id="l15-qty-out" style="margin-top:10px"></div>
+        </div>
+        <div id="tab-refund" class="tab-content">
+          <div class="lab-form">
+            <label>Order ID for refund</label>
+            <input class="lab-input" id="l15-refund" value="ORD-5521">
+            <button class="lab-btn" id="l15-refund-btn">Request Refund</button>
+          </div>
+          <div id="l15-refund-out" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Track coupon usage per-user in the database. Reject negative quantities at API level. Mark orders as refunded before processing to prevent replay. Business logic must be enforced server-side.
+        </div>
+      </div>`,
+
+    16: `
+      <div class="lab-section">
+        <h3>Default Credentials</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The admin panel ships with default credentials that are never changed.</p>
+        <div class="lab-form">
+          <label>Admin Username</label>
+          <input class="lab-input" id="l16-user" value="admin">
+          <label>Admin Password</label>
+          <input class="lab-input" id="l16-pass" value="admin" type="password">
+          <button class="lab-btn danger" id="l16-btn">Login to Admin Panel</button>
+        </div>
+        <div id="l16-out" style="margin-top:12px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Force credential change on first login. Remove or disable all default accounts. Add 2FA to admin panels. Never ship software with hardcoded credentials.
+        </div>
+      </div>`,
+
+    17: `
+      <div class="lab-section">
+        <h3>Debug Mode Exposure</h3>
+        <div class="lab-form">
+          <button class="lab-btn" id="l17-btn">Call Debug Endpoint</button>
+        </div>
+        <div id="l17-out" class="output-box" style="margin-top:12px">Click to expose debug info…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Disable debug mode in all production environments. Use environment variables (<code>NODE_ENV=production</code>). Remove or protect debug endpoints with IP allowlisting.
+        </div>
+      </div>`,
+
+    18: `
+      <div class="lab-section">
+        <h3>Sensitive Data Exposure</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">Checkout API returns full payment card data in plain text.</p>
+        <div class="lab-form">
+          <button class="lab-btn danger" id="l18-btn">Complete Checkout (Intercept Response)</button>
+        </div>
+        <div id="l18-out" class="output-box" style="margin-top:12px">Click to see API response…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Never return full card numbers, CVVs, or plaintext passwords in API responses. Store only masked data (last 4 digits). Use PCI-DSS compliant tokenisation. Encrypt sensitive fields at rest.
+        </div>
+      </div>`,
+
+    19: `
+      <div class="lab-section">
+        <h3>Forced Browsing</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">These paths are not linked from the UI but are directly accessible.</p>
+        <div class="lab-form">
+          <label>Try hidden paths</label>
+          <select class="lab-select" id="l19-path">
+            <option>/admin/users.json</option>
+            <option>/backup.sql</option>
+            <option>/config/database.yml</option>
+            <option>/.env</option>
+            <option>/phpinfo.php</option>
+          </select>
+          <button class="lab-btn" id="l19-btn">Browse Hidden Path</button>
+        </div>
+        <div id="l19-out" class="output-box">Select a path and browse…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Implement authentication on all sensitive paths. Use deny-by-default routing. Store sensitive files outside the web root. Run directory brute-forcing tools (gobuster, ffuf) in your own test environment to find gaps.
+        </div>
+      </div>`,
+
+    20: `
+      <div class="lab-section">
+        <h3>HTTP Method Misconfiguration</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The product endpoint accepts DELETE and PUT without authorisation.</p>
+        <div class="lab-form">
+          <label>HTTP Method</label>
+          <select class="lab-select" id="l20-method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>DELETE</option>
+            <option>OPTIONS</option>
+            <option>TRACE</option>
+          </select>
+          <label>Endpoint</label>
+          <input class="lab-input" id="l20-ep" value="/api/v1/products/101">
+          <button class="lab-btn" id="l20-btn">Send Request</button>
+        </div>
+        <div id="l20-out" class="output-box">Select a method and send…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Explicitly allow only required HTTP methods per endpoint. Return <code>405 Method Not Allowed</code> for others. Disable TRACE globally (XST attack). Require auth for all write methods.
+        </div>
+      </div>`,
+
+    21: `
+      <div class="lab-section">
+        <h3>API Authorization Flaws</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">Sensitive API endpoints don't verify the caller's identity or role.</p>
+        <div class="lab-form">
+          <label>API Endpoint</label>
+          <select class="lab-select" id="l21-ep">
+            <option>/api/v1/users</option>
+            <option>/api/v1/users/42</option>
+            <option>/api/v1/admin/settings</option>
+            <option>/api/v1/orders/all</option>
+          </select>
+          <label>Auth Token (leave blank to simulate missing)</label>
+          <input class="lab-input" id="l21-token" placeholder="Bearer …">
+          <button class="lab-btn danger" id="l21-btn">Call API (No Auth)</button>
+        </div>
+        <div id="l21-out" class="output-box">Click to call without auth…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Enforce authentication on every endpoint. Implement role-based access control (RBAC). Validate JWTs server-side on every request. Never rely on the client to "not call" sensitive endpoints.
+        </div>
+      </div>`,
+
+    22: `
+      <div class="lab-section">
+        <h3>Session Fixation</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">An attacker can set a known session ID before login, then hijack the authenticated session.</p>
+        <div class="lab-form">
+          <label>Attacker sets session ID</label>
+          <input class="lab-input" id="l22-sid" value="FIXED_SESSION_ABC123">
+          <button class="lab-btn danger" id="l22-btn">Login with Fixed Session</button>
+        </div>
+        <div id="l22-out" class="output-box" style="margin-top:12px">Click to simulate…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Always regenerate the session ID after a successful login (<code>req.session.regenerate()</code>). Never accept session IDs provided in URLs or pre-set by the client.
+        </div>
+      </div>`,
+
+    23: `
+      <div class="lab-section">
+        <h3>Insecure Session Management</h3>
+        <div class="lab-form">
+          <button class="lab-btn" id="l23-btn">Inspect Current Session</button>
+        </div>
+        <div id="l23-out" class="output-box" style="margin-top:12px">Click to inspect…</div>
+      </div>
+      <div class="lab-section">
+        <table class="mini-table">
+          <thead><tr><th>Issue</th><th>Finding</th><th>Risk</th></tr></thead>
+          <tbody>
+            <tr><td>Storage</td><td>localStorage (accessible via JS)</td><td><span class="vuln-severity sev-high">High</span></td></tr>
+            <tr><td>Rotation</td><td>Never rotated</td><td><span class="vuln-severity sev-high">High</span></td></tr>
+            <tr><td>Expiry</td><td>None (infinite)</td><td><span class="vuln-severity sev-high">High</span></td></tr>
+            <tr><td>Entropy</td><td>Sequential integer IDs</td><td><span class="vuln-severity sev-critical">Critical</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Use cryptographically random 128-bit session tokens. Store in HttpOnly cookies, not localStorage. Rotate on privilege change. Set absolute and idle timeouts.
+        </div>
+      </div>`,
+
+    24: `
+      <div class="lab-section">
+        <h3>Missing Rate Limiting</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">Spam the login endpoint — no lockout, no delay, no CAPTCHA.</p>
+        <div class="lab-form">
+          <label>Target email</label>
+          <input class="lab-input" id="l24-email" value="admin@shopsmart.com">
+          <button class="lab-btn danger" id="l24-btn">Brute Force (50 attempts)</button>
+        </div>
+        <div class="progress-bar-wrap" style="margin-top:12px"><div class="progress-bar-fill" id="l24-bar" style="width:0%"></div></div>
+        <div id="l24-out" class="output-box" style="margin-top:12px">Click to start brute force simulation…</div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Implement rate limiting (e.g., 5 attempts per minute per IP). Add exponential backoff. Lock accounts after N failures. Use CAPTCHA for suspicious patterns. Alert on brute-force activity.
+        </div>
+      </div>`,
+
+    25: `
+      <div class="lab-section">
+        <h3>Client-Side Validation Bypass</h3>
+        <p style="font-size:13px;color:#555;margin-bottom:16px">The "I am 18+" checkbox is only enforced in JavaScript — toggle the flag directly.</p>
+        <div class="lab-form">
+          <label><input type="checkbox" id="l25-check" disabled> I confirm I am 18 years or older (required)</label>
+          <div id="l25-flag" style="font-size:12px;color:#888;margin-top:4px">JS validation: <strong id="l25-val">BLOCKED</strong></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            <button class="lab-btn" id="l25-bypass">Bypass Validation via JS</button>
+            <button class="lab-btn danger" id="l25-submit">Purchase Restricted Item</button>
+          </div>
+        </div>
+        <div id="l25-out" style="margin-top:12px"></div>
+      </div>
+      <div class="lab-section">
+        <div class="explain-box">
+          <strong>Fix:</strong> Client-side validation is for UX only — never for security. Always re-validate every constraint (age, permissions, input format, business rules) on the server. Attackers can bypass any client-side check.
+        </div>
+      </div>`,
+  };
+
+  return labs[id] || `<div class="lab-section"><p>Lab ${id} coming soon.</p></div>`;
+}
+
+// ────────────────────────────────────
+// EVENT HANDLERS
+// ────────────────────────────────────
+function attachHandlers(id) {
+
+  // Helpers
+  const $ = s => document.querySelector(s);
+  const byId = s => document.getElementById(s);
+  const showVuln = (el, msg) => { el.innerHTML = `<div class="vuln-flag">🚨 ${msg}</div>`; };
+  const showSafe = (el, msg) => { el.innerHTML = `<div class="safe-flag">✅ ${msg}</div>`; };
+
+  if (id === 1) {
+    byId('l1-btn').onclick = () => {
+      const url = byId('l1-url').value;
+      const out = byId('l1-out');
+      out.style.display = 'block';
+      out.textContent = `GET ${url} HTTP/1.1\n\nHTTP/1.1 404 Not Found\nX-Powered-By: Express 4.17.1\nServer: nginx/1.14.2 (Ubuntu)\nContent-Type: application/json\n\n{\n  "error": "Product not found",\n  "stack": "Error: ENOENT: no such file\\n  at /var/www/shopsmart/routes/products.js:47",\n  "db_host": "mysql://internal-db.shopsmart.local:3306",\n  "node_env": "production"\n}`;
+    };
+  }
+
+  if (id === 2) {
+    byId('l2-btn').onclick = () => {
+      byId('l2-out').textContent = `HTTP/1.1 200 OK\nContent-Type: text/html\nX-Powered-By: Express 4.17.1\nSet-Cookie: session=abc123\n\n❌ Missing: Content-Security-Policy\n❌ Missing: X-Frame-Options\n❌ Missing: Strict-Transport-Security\n❌ Missing: X-Content-Type-Options\n❌ Missing: Referrer-Policy\n❌ Missing: Permissions-Policy\n✅ Present : Content-Type\n\nGrade: F  (0/6 security headers)`;
+    };
+  }
+
+  if (id === 3) {
+    byId('l3-btn').onclick = () => {
+      const url = byId('l3-url').value;
+      showVuln(byId('l3-out'), `Redirecting to: <a href="${url}" target="_blank" style="color:#ff4d6d">${url}</a> — user lands on attacker-controlled page!`);
+    };
+  }
+
+  if (id === 4) {
+    byId('l4-btn').onclick = () => {
+      const val = byId('l4-review').value;
+      byId('l4-out').innerHTML = `<strong>⭐⭐⭐⭐ — Customer Review:</strong><br><br>${val}`;
+    };
+  }
+
+  if (id === 5) {
+    byId('l5-btn').onclick = () => {
+      const val = byId('l5-input').value;
+      const el = byId('l5-out');
+      el.innerHTML = `Search results for: ${val}`;
+      byId('l5-out').insertAdjacentHTML('beforeend', ` <span style="color:var(--red);font-weight:700">(XSS executed if banner appeared above!)</span>`);
+    };
+  }
+
+  if (id === 6) {
+    byId('l6-btn').onclick = () => {
+      const val = byId('l6-hash').value;
+      byId('l6-out').innerHTML = `<strong>Product:</strong> ${val}`;
+    };
+  }
+
+  if (id === 7) {
+    byId('l7-btn').onclick = () => {
+      document.cookie = "session_token=eyJhbGciOiJub25lIiwidXNlcklkIjoiNDIifQ==; path=/; max-age=2592000";
+      document.cookie = "cart_id=c_10029; path=/";
+      byId('l7-out').textContent = `Cookies set:\nsession_token=eyJhbGciOiJub25lIiwidXNlcklkIjoiNDIifQ==\n  HttpOnly: ❌ (readable by JS!)\n  Secure:   ❌ (sent over HTTP!)\n  SameSite: ❌ (CSRF possible!)\n  Expiry:   30 days\n\nAttacker JS: document.cookie\n→ "${document.cookie}"`;
+    };
+  }
+
+  if (id === 8) {
+    byId('l8-pass').oninput = () => {
+      const p = byId('l8-pass').value;
+      let score = 0;
+      if (p.length >= 8) score += 25;
+      if (p.length >= 12) score += 25;
+      if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score += 25;
+      if (/[^a-zA-Z0-9]/.test(p)) score += 25;
+      byId('l8-bar').style.width = score + '%';
+      const labels = ['Very Weak 🔴','Weak 🟠','Moderate 🟡','Strong 🟢','Very Strong ✅'];
+      byId('l8-strength').textContent = labels[Math.floor(score/25)] || 'Very Weak 🔴';
+    };
+    byId('l8-btn').onclick = () => {
+      const p = byId('l8-pass').value;
+      if (!p) { showVuln(byId('l8-out'), 'Enter a password first'); return; }
+      showVuln(byId('l8-out'), `Password "${p}" accepted — no length/complexity requirements enforced!`);
+    };
+  }
+
+  if (id === 9) {
+    let token = null;
+    byId('l9-login').onclick = () => { token = 'SESSION_TOKEN_XYZ9001'; byId('l9-out').textContent = `✅ Logged in. Session token: ${token}`; };
+    byId('l9-logout').onclick = () => { byId('l9-out').textContent = `⚠️  Logout called — client cookie cleared.\nBut server still has: ${token || 'no session yet'}`; };
+    byId('l9-access').onclick = () => {
+      if (!token) { byId('l9-out').textContent = 'Login first!'; return; }
+      byId('l9-out').textContent = `🚨 STILL AUTHENTICATED!\nToken ${token} accepted.\n\nGET /api/v1/dashboard\n→ 200 OK\n{ "user":"alice@example.com", "orders":14, "balance":"₹3,200" }`;
+    };
+  }
+
+  if (id === 10) {
+    const listings = {
+      '/admin/': `📂 Index of /admin/\n├── users.csv\n├── config.json\n├── analytics.db\n└── reset_tokens.txt`,
+      '/uploads/': `📂 Index of /uploads/\n├── invoice_2024_01.pdf\n├── user_42_passport.jpg\n└── staff_salaries.xlsx`,
+      '/backup/': `📂 Index of /backup/\n├── db_backup_2024-12-01.sql (124 MB)\n└── codebase_v2.tar.gz`,
+      '/logs/': `📂 Index of /logs/\n├── access.log (shows all requests + IPs)\n├── error.log (stack traces)\n└── payments.log`,
+      '/.git/': `📂 Index of /.git/\n├── HEAD\n├── config (remote URL + credentials)\n├── COMMIT_EDITMSG\n└── objects/ (entire source code)`
+    };
+    byId('l10-btn').onclick = () => {
+      byId('l10-out').textContent = listings[byId('l10-path').value] || 'Path not found';
+    };
+  }
+
+  if (id === 11) {
+    const orders = {
+      1001: { user:'alice@example.com', items:'Earbuds Pro', total:'₹2,499', address:'12 MG Road, Bengaluru' },
+      1002: { user:'bob@example.com',   items:'Gaming Keyboard', total:'₹3,299', address:'45 Park Street, Mumbai' },
+      1003: { user:'carol@example.com', items:'Smart Watch', total:'₹8,999', address:'7 Anna Nagar, Chennai' },
+    };
+    byId('l11-btn').onclick = () => {
+      const id2 = +byId('l11-id').value;
+      const o = orders[id2];
+      if (o) {
+        byId('l11-out').textContent = `GET /api/orders/${id2}\n→ 200 OK\n\n{ "order_id": ${id2}, "user": "${o.user}",\n  "items": "${o.items}", "total": "${o.total}",\n  "shipping_address": "${o.address}" }`;
+      } else {
+        byId('l11-out').textContent = `Order ${id2} not found`;
+      }
+    };
+  }
+
+  if (id === 12) {
+    byId('l12-btn').onclick = () => { byId('l12-out').style.display = 'block'; };
+  }
+
+  if (id === 13) {
+    byId('l13-btn').onclick = () => {
+      byId('l13-out').textContent = `Origin: https://evil-attacker.com\n→ Request sent to https://api.shopsmart.com/v1/me\n\nResponse headers:\n  Access-Control-Allow-Origin: *\n  Access-Control-Allow-Credentials: true\n\nResponse body (200 OK):\n{ "email":"victim@example.com", "card_last4":"9087",\n  "address":"42 MG Road", "order_count":14 }\n\n🚨 evil-attacker.com can READ this data!`;
+    };
+  }
+
+  if (id === 14) {
+    byId('l14-btn').onclick = () => {
+      const price = +byId('l14-price').value;
+      const qty = +byId('l14-qty').value;
+      const total = price * qty;
+      if (price < 100) {
+        showVuln(byId('l14-out'), `Order placed! Total charged: ₹${total} instead of ₹${2499*qty}. You saved ₹${2499*qty - total}!`);
+      } else {
+        byId('l14-out').innerHTML = `<div class="safe-flag">✅ Order placed at ₹${total}. Try changing price to ₹1!</div>`;
+      }
+    };
+  }
+
+  if (id === 15) {
+    // Tabs
+    document.querySelectorAll('#lab-panel .tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('#lab-panel .tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#lab-panel .tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        byId('tab-' + btn.dataset.tab).classList.add('active');
+      };
+    });
+    let couponUsed = 0;
+    byId('l15-coupon-btn').onclick = () => {
+      couponUsed++;
+      showVuln(byId('l15-coupon-out'), `Coupon applied ${couponUsed} time(s)! Saved ₹${249*couponUsed} total (should only work once).`);
+    };
+    byId('l15-qty-btn').onclick = () => {
+      const q = +byId('l15-qty').value;
+      if (q < 0) showVuln(byId('l15-qty-out'), `Cart total reduced by ₹${Math.abs(q)*2499}! Negative quantity caused a refund.`);
+      else byId('l15-qty-out').innerHTML = `<div class="safe-flag">✅ ${q} items added normally. Try -5!</div>`;
+    };
+    let refunds = {};
+    byId('l15-refund-btn').onclick = () => {
+      const o = byId('l15-refund').value;
+      refunds[o] = (refunds[o]||0)+1;
+      if (refunds[o] > 1) showVuln(byId('l15-refund-out'), `Refund #${refunds[o]} processed for ${o}! Duplicate refund accepted.`);
+      else byId('l15-refund-out').innerHTML = `<div class="safe-flag">✅ Refund #1 for ${o} processed. Click again to double-refund!</div>`;
+    };
+  }
+
+  if (id === 16) {
+    byId('l16-btn').onclick = () => {
+      const u = byId('l16-user').value.toLowerCase();
+      const p = byId('l16-pass').value.toLowerCase();
+      const defaults = [['admin','admin'],['admin','password'],['root','root'],['admin','123456']];
+      const hit = defaults.find(([du,dp]) => u===du && p===dp);
+      if (hit) {
+        showVuln(byId('l16-out'), `Login successful! Welcome, admin. You now have full access to all 12,400 customers, orders, and financial data.`);
+      } else {
+        showSafe(byId('l16-out'), `Invalid credentials. (Try admin/admin, admin/password, or root/root)`);
+      }
+    };
+  }
+
+  if (id === 17) {
+    byId('l17-btn').onclick = () => {
+      byId('l17-out').textContent = `GET /_debug HTTP/1.1\n→ 200 OK\n\n{\n  "env": "production",\n  "debug": true,\n  "node_version": "v18.12.1",\n  "db_url": "mysql://root:Sh0pSm4rt2024!@internal-db:3306/shop",\n  "jwt_secret": "super_secret_key_dont_share",\n  "aws_key": "AKIA3EXAMPLE7KEY",\n  "aws_secret": "abc123ExampleSecretKey",\n  "last_error": "Cannot read property 'id' of undefined\\n  at /app/routes/orders.js:88"\n}`;
+    };
+  }
+
+  if (id === 18) {
+    byId('l18-btn').onclick = () => {
+      byId('l18-out').textContent = `POST /api/v1/checkout\n→ 200 OK\n\n{\n  "order_id": "ORD-9921",\n  "status": "success",\n  "payment": {\n    "card_number": "4532 0151 1283 0366",\n    "cvv": "847",\n    "expiry": "09/26",\n    "cardholder": "Rahul Menon",\n    "billing_address": "12 MG Road, Thrissur, KL"\n  },\n  "amount_charged": "₹2,499"\n}\n\n⚠️  Full card data returned! Visible to JS, logs, proxies.`;
+    };
+  }
+
+  if (id === 19) {
+    const found = {
+      '/admin/users.json':  `200 OK — [{"id":1,"email":"admin@shopsmart.com","role":"superadmin"},{"id":2,...}]`,
+      '/backup.sql':        `200 OK — SQL dump: CREATE TABLE users (id, email, password_hash, ...); INSERT INTO users VALUES...`,
+      '/config/database.yml': `200 OK — host: internal-db\ndb: shopsmartdb\nuser: root\npassword: Sh0pSm4rt2024!`,
+      '/.env':              `200 OK — DB_PASSWORD=Sh0pSm4rt2024!\nJWT_SECRET=super_secret\nSTRIPE_SECRET=sk_live_abc123`,
+      '/phpinfo.php':       `200 OK — PHP 8.1.2, Server: Apache, OS: Linux x86_64, extensions: mysqli, curl, openssl...`
+    };
+    byId('l19-btn').onclick = () => {
+      byId('l19-out').textContent = `GET ${byId('l19-path').value}\n→ ${found[byId('l19-path').value] || '404 Not Found'}`;
+    };
+  }
+
+  if (id === 20) {
+    byId('l20-btn').onclick = () => {
+      const m = byId('l20-method').value;
+      const ep = byId('l20-ep').value;
+      const responses = {
+        GET:    `200 OK — { "id": 101, "name": "Earbuds Pro", "price": 2499 }`,
+        POST:   `201 Created — { "id": 102, "name": "New Product" }`,
+        PUT:    `200 OK — Product 101 overwritten with empty body! 🚨`,
+        DELETE: `200 OK — Product 101 DELETED. No auth required. 🚨`,
+        OPTIONS:`200 OK\nAllow: GET, POST, PUT, DELETE, PATCH, OPTIONS, TRACE\n⚠️  Server exposes all methods!`,
+        TRACE:  `200 OK — TRACE echo:\nX-Custom-IP-Authorization: internal\nCookie: session=abc123\n⚠️  XST possible!`
+      };
+      byId('l20-out').textContent = `${m} ${ep}\n→ ${responses[m]}`;
+    };
+  }
+
+  if (id === 21) {
+    byId('l21-btn').onclick = () => {
+      const ep = byId('l21-ep').value;
+      const tok = byId('l21-token').value.trim();
+      const results = {
+        '/api/v1/users':          `[{"id":1,"email":"admin@shopsmart.com","password_hash":"$2b$10$abc..."},{"id":2,"email":"alice@..."}, ...]`,
+        '/api/v1/users/42':       `{"id":42,"email":"bob@example.com","phone":"+91 98765 43210","card":"4532...0366"}`,
+        '/api/v1/admin/settings': `{"maintenance_mode":false,"allow_registrations":true,"smtp_password":"Sm4rtM4il!"}`,
+        '/api/v1/orders/all':     `[{"order_id":1001,"user":"alice","total":"₹2499"},{"order_id":1002,"user":"bob","total":"₹3299"},...]`
+      };
+      if (tok) {
+        byId('l21-out').textContent = `${ep}\nAuthorization: ${tok}\n→ 200 OK\n${results[ep]}`;
+      } else {
+        byId('l21-out').textContent = `${ep}\n[No auth token sent]\n→ 200 OK ⚠️  (should be 401!)\n\n${results[ep]}`;
+      }
+    };
+  }
+
+  if (id === 22) {
+    byId('l22-btn').onclick = () => {
+      const sid = byId('l22-sid').value;
+      byId('l22-out').textContent = `Step 1: Attacker visits /login?PHPSESSID=${sid}\nStep 2: Server accepts pre-set session ID\nStep 3: Victim logs in at same URL\nStep 4: Server authenticates to session ${sid}\n\n→ Attacker now has a valid authenticated session!\n→ Session ID was NEVER regenerated after login. 🚨`;
+    };
+  }
+
+  if (id === 23) {
+    byId('l23-btn').onclick = () => {
+      const fakeToken = 'sess_' + (Math.floor(Math.random()*100)+1);
+      localStorage.setItem('shop_session', fakeToken);
+      byId('l23-out').textContent = `localStorage["shop_session"] = "${fakeToken}"\n\n⚠️  Issues:\n1. Readable by any JS on page (XSS → token theft)\n2. Token is sequential — try sess_1 through sess_100\n3. No expiry — valid forever\n4. Not rotated after login/privilege change\n5. No HttpOnly protection (not in cookie)`;
+    };
+  }
+
+  if (id === 24) {
+    byId('l24-btn').onclick = async () => {
+      const email = byId('l24-email').value;
+      const out = byId('l24-out');
+      const bar = byId('l24-bar');
+      const passwords = ['123456','password','admin','qwerty','letmein','welcome','monkey','dragon','pass','test','abc123','iloveyou','sunshine','master','whatever','football','shadow','superman','michael','jessica'];
+      out.textContent = `Starting brute force against ${email}...\n`;
+      for (let i=0; i<50; i++) {
+        await new Promise(r => setTimeout(r, 30));
+        bar.style.width = ((i+1)*2) + '%';
+        const pw = passwords[i % passwords.length];
+        out.textContent += `[${i+1}/50] Trying: ${pw} → 401 Invalid\n`;
+        out.scrollTop = out.scrollHeight;
+      }
+      out.textContent += `\n✅ Completed 50 requests in ~1.5s. No lockout. No CAPTCHA. No alert triggered.`;
+    };
+  }
+
+  if (id === 25) {
+    byId('l25-bypass').onclick = () => {
+      byId('l25-check').disabled = false;
+      byId('l25-check').checked = true;
+      byId('l25-val').textContent = 'BYPASSED (via DevTools/JS)';
+      byId('l25-val').style.color = 'var(--red)';
+    };
+    byId('l25-submit').onclick = () => {
+      if (!byId('l25-check').checked) {
+        showVuln(byId('l25-out'), 'Please confirm age (or bypass the check!)');
+      } else {
+        showVuln(byId('l25-out'), 'Purchase completed! Age verification was client-side only — server never checked.');
+      }
+    };
+  }
+}
+
+// ────────────────────────────────────
+// FINAL ASSESSMENT
+// ────────────────────────────────────
+function buildFinalAssessment() {
+  const data = [
+    { name:"Information Disclosure", risk:6 },
+    { name:"Security Headers",       risk:5 },
+    { name:"Open Redirect",          risk:6 },
+    { name:"HTML Injection",         risk:5 },
+    { name:"Reflected XSS",          risk:8 },
+    { name:"DOM-Based XSS",          risk:8 },
+    { name:"Cookie Issues",          risk:7 },
+    { name:"Weak Passwords",         risk:6 },
+    { name:"Broken Logout",          risk:7 },
+    { name:"Directory Listing",      risk:6 },
+    { name:"IDOR",                   risk:8 },
+    { name:"Clickjacking",           risk:4 },
+    { name:"CORS Misconfiguration",  risk:7 },
+    { name:"Parameter Tampering",    risk:9 },
+    { name:"Business Logic",         risk:8 },
+    { name:"Default Credentials",    risk:10 },
+    { name:"Debug Exposure",         risk:7 },
+    { name:"Sensitive Data",         risk:9 },
+    { name:"Forced Browsing",        risk:6 },
+    { name:"HTTP Methods",           risk:5 },
+    { name:"API Auth Flaws",         risk:9 },
+    { name:"Session Fixation",       risk:7 },
+    { name:"Insecure Sessions",      risk:8 },
+    { name:"No Rate Limiting",       risk:6 },
+    { name:"Validation Bypass",      risk:6 },
+  ];
+
+  const avg = Math.round(data.reduce((a,b)=>a+b.risk,0)/data.length*10);
+  document.getElementById('final-score').textContent = avg + '/100';
+  document.getElementById('final-score').style.borderColor = avg > 70 ? '#ff4d6d' : avg > 40 ? '#ffd166' : '#00e5a0';
+
+  const grid = document.getElementById('final-grid');
+  grid.innerHTML = '';
+  data.forEach(d => {
+    const color = d.risk >= 8 ? 'var(--red)' : d.risk >= 6 ? '#ffd166' : 'var(--green)';
+    grid.innerHTML += `
+    <div class="vuln-summary-item">
+      <span class="name">${d.name}</span>
+      <span style="font-weight:800;color:${color}">${d.risk}/10</span>
+    </div>`;
+  });
+}
+
+</script>
 </body>
 </html>
